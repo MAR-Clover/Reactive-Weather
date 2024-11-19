@@ -10,17 +10,19 @@ function WeatherCard({city}) {
   const [weather, setWeather] = useState("");
 
   useEffect(() => {
-    // Update weather when city.forecast changes
+    
     if (city.forecast === "Sunny") {
       setWeather(sunny);
     } else if (city.forecast === "Rainy") {
       setWeather(rainy);
     } else if (city.forecast === "Cloudy") {
       setWeather(cloudy);
-    } else if (city.forecast == "partly Cloudy"){
+    } else if (city.forecast == "Partly cloudy"){
       setWeather(partlyCloudy);
+    }else{
+      setWeather(cloudy)
     }
-  }, [city.forecast]); // Dependency array ensures the effect runs when forecast changes
+  }, [city.forecast]); 
 
   return (
     <div className = "card">
@@ -36,7 +38,4 @@ function WeatherCard({city}) {
   );
 };
 
-// Export the WeatherCard
-//gives me error unless i use export default
-//export default WeatherCard
 module.exports = WeatherCard
