@@ -26,8 +26,8 @@ function Location({ data, location, setLocation }) {
       setWeather(partlyCloudy);
     }
   }, [match.forecast]); 
-  console.log(match.forecast)
-  // Conditionally render based on whether match is found
+
+ //this will just return a h1 if no match found; debugging purposes
   if (!match) {
     return <h1>Match not found</h1>;
   }
