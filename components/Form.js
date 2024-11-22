@@ -1,30 +1,49 @@
 import { useState } from "react"
 const cities = require("../data")
 
-function Form ({location,setLocation}) {
+function Form ({setLocation, setCityName, setCountry, setRegion}) {
     const [typedLocation, setTypedLocation] = useState("")
     const [error, setError] = useState("");
 
+    const apiKey = process.env.ACCU_API_KEY;
 
-    function handleSubmit (e) {
+  async function handleSubmit (e) {
         e.preventDefault();
 
-        try{
-            //throws error if user typed location is not present in city data array
-            //can also add a way to check uppercase and lowercase letters to account for 'paris' search to retrieve 'Paris' from city data array
-            const match = cities.find((city) => city.city === typedLocation);
 
-            if (!match) {
-              setError("No match found for this city");
-              return;
+        try {
+            
+            const response = await fetch(`http://dataservice.accuweather.com/locations/v1/cities/search?apikey=${apiKey}&q=${typedLocation}`);
+        
+            
+            if (!response.ok) {
+              throw new Error("API error");
             }
-            //if no error sets location
-            setLocation(typedLocation);
-            setTypedLocation("");
-            setError(""); 
-        }catch (error) {
-            setError("An error occurred ");
-        }
+        
+            
+            const data = await response.json();
+            const cityKey = data[0].Key
+            const cityLocalName = data[0].LocalizedName
+            const country = data[0].Country.ID
+            const region = data[0].AdministrativeArea.ID
+
+           
+            console.log(data);
+            console.log(`city key is: ${cityKey}`)
+
+            setLocation(cityKey);
+            setCityName(cityLocalName)
+            setCountry(country)
+            setRegion(region)
+            setTypedLocation("");   
+            setError("");           
+          } catch (error) {
+            console.log(error);
+            setError("An error occurred while fetching the data");
+          }
+
+
+
 
     }   
     return(
@@ -34,7 +53,10 @@ function Form ({location,setLocation}) {
                 <label className = "city">City:
                     <input value={typedLocation} 
                     onChange={(e)=>setTypedLocation(e.target.value)}
-                    type="text"/>
+                    type="text"
+                    placeholder="provide state or country for accuracy ex: Edison NJ "
+                    style={{width:"500px", fontSize:"20px"}}
+                    />
                 </label>
                 <button 
                     className = "btn btn-primary" 
@@ -47,25 +69,3 @@ function Form ({location,setLocation}) {
 }
 module.exports = Form
 
-
-
-
-
-
-
-
-// Destructure the location and setLocation props.
-// Return a <form> element that has an <input> element that will accept a city input and <button> element. Feel free to create your own or you can use the template code below:
-
-// <div className = "form">
-//     <form>
-//         <label className = "city">City:
-//             <input type="text"/>
-//         </label>
-//         <button 
-//             className = "btn btn-primary" 
-//             type="submit"
-//         >Submit</button>
-//     </form>
-// </div>
-// Assign the <input> a value of location and create an onChange event handler that sets the location to the current value of the <input> using e.target.value.
